@@ -20,4 +20,7 @@ router.get("/tommorrow", (req, res) => {});
 // add
 router.post("/:id", zodValidateData(addTaskMiddleware), addTask);
 
+// edit(patch) task
+router.patch("/:id", zodValidateData(addTaskMiddleware), addTask);
+
 export default router;

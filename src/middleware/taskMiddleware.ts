@@ -3,6 +3,7 @@ import { z } from "zod";
 export const addTaskMiddleware = z.object({
   task_title: z.string().nonempty("Task title is required."),
   task_body: z.string().nonempty("Task title is required."),
+  taskCategory: z.string().nonempty("Task Category is required."),
   reminder: z.coerce.date({
     required_error: "Please select a date and time",
     invalid_type_error: "That's not a date!",
