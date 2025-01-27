@@ -14,5 +14,7 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "paths": { "*": ["node/modules/*"] }
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
