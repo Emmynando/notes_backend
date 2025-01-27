@@ -7,24 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id       String   @id @default(cuid())
-  username String   
+  id       String @id @default(cuid())
+  username String
   password String
-  email    String   @unique
-  tasks    Task[]   @relation("UserTasks")
+  email    String @unique
+  tasks    Task[] @relation("UserTasks")
 }
 
 model Task {
-  id         String   @id @default(cuid())
-  task_title String
-  userId     String
-  task_body  String   
-  reminder   DateTime
-  schedule   DateTime
+  id           String   @id @default(cuid())
+  task_title   String
+  userId       String
+  task_body    String
+  reminder     DateTime
+  schedule     DateTime
+  createdAt    DateTime @default(now())
   taskCategory String
-  createdAt  DateTime @default(now())
-  user       User     @relation("UserTasks", fields: [userId], references: [id]) // Relation to User
+  user         User     @relation("UserTasks", fields: [userId], references: [id])
 }
-

@@ -53,6 +53,7 @@ export const addTask = async (req: Request, res: Response) => {
     // if user does not exist
     if (!userID) {
       res.status(403).json({ message: "User not found" });
+      return;
     }
     // all checks passed
     // create task
@@ -78,16 +79,36 @@ export const addTask = async (req: Request, res: Response) => {
 
 // EDIT TASK
 export const editTask = async (req: Request, res: Response) => {
-  const { taskID } = req.params;
-  if (!taskID) {
+  const { id } = req.params;
+  if (!id) {
     res.status(401).json({ message: "Cannot make Request" });
     return;
   }
-  const { task_title, task_body, reminder, schedule, taskCategory } =
+
+  // check for user using user id
+  const userID = await prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  // if user does not exist
+  if (!userID) {
+    res.status(403).json({ message: "User not found" });
+    return;
+  }
+
+  const { task_title, task_body, reminder, schedule, taskCategory, taskID } =
     await req.body;
 
   // if any field is empty
-  if (!task_title || !task_body || !reminder || !schedule || !taskCategory) {
+  if (
+    !task_title ||
+    !task_body ||
+    !reminder ||
+    !schedule ||
+    !taskCategory ||
+    !taskID
+  ) {
     res.status(400).json({ message: "Invalid Fields" });
     return;
   }
@@ -121,9 +142,7 @@ export const editTask = async (req: Request, res: Response) => {
     });
     // return all data except userID
     const { userId, ...responseData } = updateTask;
-    res
-      .status(201)
-      .json({ message: "Task succesfully added", data: responseData });
+    res.status(201).json({ message: "Update Successful", data: responseData });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -135,5 +154,21 @@ export const deleteTask = async (req: Request, res: Response) => {
   if (!id) {
     res.status(401).json({ message: "Cannot make Request" });
     return;
+  }
+
+  try {
+    const deleteTask = await prisma.task.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!deleteTask) {
+      res.status(400).json({ message: "Request Failed" });
+      return;
+    }
+    res.status(200).json({ message: "Task Deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
   }
 };

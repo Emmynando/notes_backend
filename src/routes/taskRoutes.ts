@@ -1,5 +1,10 @@
 import express from "express";
-import { getAllTasks, addTask } from "../controllers/taskController";
+import {
+  getAllTasks,
+  addTask,
+  editTask,
+  deleteTask,
+} from "../controllers/taskController";
 import { zodValidateData } from "../middleware/zodMiddleware";
 import { addTaskMiddleware } from "../middleware/taskMiddleware";
 
@@ -21,6 +26,9 @@ router.get("/tommorrow", (req, res) => {});
 router.post("/:id", zodValidateData(addTaskMiddleware), addTask);
 
 // edit(patch) task
-router.patch("/:id", zodValidateData(addTaskMiddleware), addTask);
+router.patch("/:id", zodValidateData(addTaskMiddleware), editTask);
+
+// delete task
+router.delete("/:id", zodValidateData(addTaskMiddleware), deleteTask);
 
 export default router;
