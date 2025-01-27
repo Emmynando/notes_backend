@@ -6,6 +6,8 @@ import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import cors from "cors";
 
+const PORT = process.env.PORT || 8080;
+
 import { authMiddleware } from "./middleware/authMiddleware.js";
 
 const limiter = rateLimit({
@@ -15,15 +17,23 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 });
 
+const corsOptions = {
+  origin: ["http://localhost:8080", "https://emnotes.vercel.app"], // List allowed origins
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allowed methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  exposedHeaders: ["Content-Range", "X-Content-Range"], // Headers that can be exposed
+  credentials: true, // Allow credentials (cookies, authorization headers, etc)
+  maxAge: 86400, // How long the results of a preflight request can be cached
+};
+
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 8080;
 app.use(limiter);
 app.use(urlencoded({ extended: false }));
 app.use(json({ limit: "70kb" }));
 // Apply the rate limiting middleware to all requests.
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOptions));
 
 // app.use(middleware)
 
