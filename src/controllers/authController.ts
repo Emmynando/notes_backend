@@ -19,8 +19,19 @@ export const handleSignUp = async (req: Request, res: Response) => {
       },
     });
     const { password, ...responseData } = user;
+    // all checks passed
+    // sign token
+    const token = jwt.sign(
+      {
+        id: responseData.id,
+        email: responseData.email,
+        username: responseData.username,
+      },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "30d" }
+    );
 
-    res.status(201).json({ responseData });
+    res.status(201).json({ responseData, token });
   } catch (error) {
     res.status(500).json({ error });
   }

@@ -2,13 +2,28 @@ import express, { json, urlencoded } from "express";
 import dotenv from "dotenv";
 import taskRoutes from "./routes/taskRoutes";
 import authRoutes from "./routes/authRoutes";
+import { rateLimit } from "express-rate-limit";
+import helmet from "helmet";
+import cors from "cors";
+import xss from "xss";
 import { authMiddleware } from "./middleware/authMiddleware";
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  standardHeaders: "draft-8", // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+});
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
+app.use(limiter);
 app.use(urlencoded({ extended: false }));
-app.use(json());
+app.use(json({ limit: "70kb" }));
+// Apply the rate limiting middleware to all requests.
+app.use(helmet());
+app.use(cors());
 
 // app.use(middleware)
 

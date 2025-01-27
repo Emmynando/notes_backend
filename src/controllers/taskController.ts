@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/PrismaClient";
+import xss from "xss";
 
 // GET TASK
 export const getAllTasks = async (req: Request, res: Response) => {
@@ -29,6 +30,10 @@ export const getAllTasks = async (req: Request, res: Response) => {
 
 // ADD TASK
 export const addTask = async (req: Request, res: Response) => {
+  if (!req.is("application/json")) {
+    res.status(415).json({ message: "unsupported media type" });
+    return;
+  }
   const { id } = req.params;
 
   if (!id) {
@@ -43,6 +48,8 @@ export const addTask = async (req: Request, res: Response) => {
   if (!task_title && !task_body && !reminder && !schedule && !taskCategory) {
     res.status(400).json({ message: "Invalid Fields" });
   }
+  const sanitizedTaskbody = xss(task_body);
+  const sanitizedTaskTitle = xss(task_title);
   try {
     // check for user using user id
     const userID = await prisma.user.findUnique({
@@ -60,8 +67,8 @@ export const addTask = async (req: Request, res: Response) => {
     const createTask = await prisma.task.create({
       data: {
         userId: id,
-        task_title,
-        task_body,
+        task_title: sanitizedTaskTitle,
+        task_body: sanitizedTaskbody,
         reminder,
         schedule,
         taskCategory,
@@ -79,6 +86,10 @@ export const addTask = async (req: Request, res: Response) => {
 
 // EDIT TASK
 export const editTask = async (req: Request, res: Response) => {
+  if (!req.is("application/json")) {
+    res.status(415).json({ message: "unsupported media type" });
+    return;
+  }
   const { id } = req.params;
   if (!id) {
     res.status(401).json({ message: "Cannot make Request" });
