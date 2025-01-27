@@ -1,12 +1,12 @@
 import express, { json, urlencoded } from "express";
 import dotenv from "dotenv";
-import taskRoutes from "./routes/taskRoutes";
-import authRoutes from "./routes/authRoutes";
+import taskRoutes from "./routes/taskRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import cors from "cors";
-import xss from "xss";
-import { authMiddleware } from "./middleware/authMiddleware";
+
+import { authMiddleware } from "./middleware/authMiddleware.js";
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

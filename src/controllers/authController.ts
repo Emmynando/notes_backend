@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import prisma from "../prisma/PrismaClient";
+import prisma from "../prisma/PrismaClient.js";
 import jwt from "jsonwebtoken";
 
 export const handleSignUp = async (req: Request, res: Response) => {

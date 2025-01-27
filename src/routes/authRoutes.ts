@@ -1,6 +1,6 @@
 import express from "express";
-import { handleSignUp, handleLogin } from "../controllers/authController";
-import { zodValidateData } from "../middleware/zodMiddleware";
+import { handleSignUp, handleLogin } from "../controllers/authController.js";
+import { zodValidateData } from "../middleware/zodMiddleware.js";
 import { z } from "zod";
 const router = express.Router();
 

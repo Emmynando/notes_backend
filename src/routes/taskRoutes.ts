@@ -4,9 +4,9 @@ import {
   addTask,
   editTask,
   deleteTask,
-} from "../controllers/taskController";
-import { zodValidateData } from "../middleware/zodMiddleware";
-import { addTaskMiddleware } from "../middleware/taskMiddleware";
+} from "../controllers/taskController.js";
+import { zodValidateData } from "../middleware/zodMiddleware.js";
+import { addTaskMiddleware } from "../middleware/taskMiddleware.js";
 
 const router = express.Router();
 

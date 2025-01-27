@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import prisma from "../prisma/PrismaClient";
+import prisma from "../prisma/PrismaClient.js";
 import xss from "xss";
 
 // GET TASK
