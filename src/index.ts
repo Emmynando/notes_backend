@@ -18,7 +18,7 @@ const limiter = rateLimit({
 });
 
 const corsOptions = {
-  origin: ["http://localhost:8080", "https://emnotes.vercel.app"], // List allowed origins
+  origin: ["http://localhost:3000", "https://emnotes.vercel.app"], // List allowed origins
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allowed methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   exposedHeaders: ["Content-Range", "X-Content-Range"], // Headers that can be exposed
