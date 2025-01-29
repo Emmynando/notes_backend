@@ -20,17 +20,6 @@ export const handleSignUp = async (req: Request, res: Response) => {
     });
     const { password, ...responseData } = user;
     // all checks passed
-    // sign token
-    // const token = jwt.sign(
-    //   {
-    //     id: responseData.id,
-    //     email: responseData.email,
-    //     username: responseData.username,
-    //   },
-    //   process.env.JWT_SECRET as string,
-    //   { expiresIn: "30d" }
-    // );
-
     // Generate Access Token
     const accessToken = jwt.sign(
       {
@@ -52,7 +41,7 @@ export const handleSignUp = async (req: Request, res: Response) => {
     // Set refresh token in HTTP-Only cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true, // Set to false in development
+      secure: true,
       sameSite: "strict",
     });
 

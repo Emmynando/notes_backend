@@ -49,14 +49,13 @@ export const addTask = async (req: Request, res: Response) => {
     scheduleEnd,
     taskCategory,
   } = await req.body;
-  //   console.log("Current time (UTC):", new Date(Date.now()).toISOString());
 
   if (
-    !task_title &&
-    !task_body &&
-    !reminder &&
-    !scheduleStart &&
-    !scheduleEnd &&
+    !task_title ||
+    !task_body ||
+    !reminder ||
+    !scheduleStart ||
+    !scheduleEnd ||
     !taskCategory
   ) {
     res.status(400).json({ message: "Invalid Fields" });
@@ -88,6 +87,11 @@ export const addTask = async (req: Request, res: Response) => {
         taskCategory,
       },
     });
+
+    if (!createTask) {
+      res.status(400).json({ message: "Invalid Fields" });
+      return;
+    }
     // return all data except userID
     const { userId, ...responseData } = createTask;
     res
