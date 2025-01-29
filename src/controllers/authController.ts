@@ -102,7 +102,7 @@ export const handleLogin = async (req: Request, res: Response) => {
         return;
       }
 
-      console.log(existingUser);
+      // console.log(existingUser)
 
       // all checks passed
       // sign token
