@@ -90,9 +90,6 @@ export const handleLogin = async (req: Request, res: Response) => {
         res.status(400).json({ error: "Authentication failed" });
         return;
       }
-      console.log(isPasswordValid);
-
-      console.log(existingUser);
 
       // all checks passed
       // Generate Access Token
@@ -116,7 +113,14 @@ export const handleLogin = async (req: Request, res: Response) => {
       //   sameSite: "strict",
       // });
 
-      res.status(200).json({ message: "Login Successful", email, accessToken });
+      res
+        .status(200)
+        .json({
+          message: "Login Successful",
+          id: existingUser.id,
+          email,
+          accessToken,
+        });
     } else {
       // login using username if username was provided
       // check for user using username
