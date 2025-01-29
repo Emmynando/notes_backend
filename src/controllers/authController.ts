@@ -21,17 +21,42 @@ export const handleSignUp = async (req: Request, res: Response) => {
     const { password, ...responseData } = user;
     // all checks passed
     // sign token
-    const token = jwt.sign(
+    // const token = jwt.sign(
+    //   {
+    //     id: responseData.id,
+    //     email: responseData.email,
+    //     username: responseData.username,
+    //   },
+    //   process.env.JWT_SECRET as string,
+    //   { expiresIn: "30d" }
+    // );
+
+    // Generate Access Token
+    const accessToken = jwt.sign(
       {
         id: responseData.id,
         email: responseData.email,
         username: responseData.username,
       },
       process.env.JWT_SECRET as string,
-      { expiresIn: "30d" }
+      { expiresIn: "15m" } // Short lifespan for access token
     );
 
-    res.status(201).json({ responseData, token });
+    // Generate Refresh Token
+    const refreshToken = jwt.sign(
+      { id: responseData.id },
+      process.env.REFRESH_SECRET as string,
+      { expiresIn: "7d" } // Longer lifespan for refresh token
+    );
+
+    // Set refresh token in HTTP-Only cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true, // Set to false in development
+      sameSite: "strict",
+    });
+
+    res.status(201).json({ responseData, accessToken });
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -78,12 +103,33 @@ export const handleLogin = async (req: Request, res: Response) => {
 
       // all checks passed
       // sign token
-      const token = jwt.sign(
-        { id: existingUser.id, email },
+      // const token = jwt.sign(
+      //   { id: existingUser.id, email },
+      //   process.env.JWT_SECRET as string,
+      //   { expiresIn: "30d" }
+      // );
+      // Generate Access Token
+      const accessToken = jwt.sign(
+        { id: existingUser.id, email: existingUser.email },
         process.env.JWT_SECRET as string,
-        { expiresIn: "30d" }
+        { expiresIn: "15m" }
       );
-      res.status(200).json({ message: "Login Successful", email, token });
+
+      // Generate Refresh Token
+      const refreshToken = jwt.sign(
+        { id: existingUser.id },
+        process.env.REFRESH_SECRET as string,
+        { expiresIn: "7d" }
+      );
+
+      // Store refresh token in HTTP-Only Cookie
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true, // Set to false in development
+        sameSite: "strict",
+      });
+
+      res.status(200).json({ message: "Login Successful", email, accessToken });
     } else {
       // login using username if username was provided
       // check for user using username
@@ -125,18 +171,64 @@ export const handleLogin = async (req: Request, res: Response) => {
 
       // all checks passed
       // sign token
-      const token = jwt.sign(
+      // const token = jwt.sign(
+      //   { id: userId, email, username },
+      //   process.env.JWT_SECRET as string,
+      //   { expiresIn: "30d" }
+      // );
+      const accessToken = jwt.sign(
         { id: userId, email, username },
         process.env.JWT_SECRET as string,
-        { expiresIn: "30d" }
+        { expiresIn: "15m" }
       );
-      res
-        .status(200)
-        .json({ message: "Login Successful", userId, username, token });
+
+      // Generate Refresh Token
+      const refreshToken = jwt.sign(
+        { id: userId },
+        process.env.REFRESH_SECRET as string,
+        { expiresIn: "7d" }
+      );
+
+      // Store refresh token in HTTP-Only Cookie
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true, // Set to false in development
+        sameSite: "strict",
+      });
+      res.status(200).json({ message: "Login Successful", email, accessToken });
     }
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error });
   }
 };
 
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtNmRrN3JqazAwMDJ0dmlzNzkxbGowM2wiLCJlbWFpbCI6ImFsZXhhbmRlci5lbW15eGlhbm9AZ21haWwuY29tIiwiaWF0IjoxNzM3ODkyMzU1LCJleHAiOjE3NDA0ODQzNTV9.6AFErZQaZQBqplzWBQoPlsmjlNBXPNiuUCLj_tkP1wA
+export const handleRefreshToken = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(403).json({ error: "Refresh token required" });
+  }
+
+  try {
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_SECRET as string
+    ) as { id: string };
+
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    if (!user) {
+      return res.status(403).json({ error: "User not found" });
+    }
+
+    // Generate new Access Token
+    const newAccessToken = jwt.sign(
+      { id: user.id, email: user.email, username: user.username },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "15m" }
+    );
+
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    res.status(403).json({ error: "Invalid refresh token" });
+  }
+};

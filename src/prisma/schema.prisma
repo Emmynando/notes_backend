@@ -21,7 +21,8 @@ model Task {
   userId       String
   task_body    String
   reminder     DateTime
-  schedule     DateTime
+  scheduleStart DateTime  
+  scheduleEnd   DateTime  
   createdAt    DateTime @default(now())
   taskCategory String
   user         User     @relation("UserTasks", fields: [userId], references: [id])

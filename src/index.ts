@@ -46,6 +46,8 @@ app.use("/auth", authRoutes);
 
 // route for getting tasks
 app.use("/task", authMiddleware, taskRoutes);
+
+
 app.all("*", (req, res) => {
   res.status(404).send("Wallahi, Resource does not Exist");
 });
