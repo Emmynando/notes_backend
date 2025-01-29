@@ -5,13 +5,10 @@ import authRoutes from "./routes/authRoutes.js";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import cors from "cors";
-import { authMiddleware } from "./middleware/authMiddleware.js";
 
 const PORT = process.env.PORT || 8080;
-const app = express();
+import { authMiddleware } from "./middleware/authMiddleware.js";
 
-// Trust proxies (needed for Render)
-app.set("trust proxy", 1);
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
@@ -29,6 +26,7 @@ const corsOptions = {
 };
 
 dotenv.config();
+const app = express();
 app.use(limiter);
 app.use(urlencoded({ extended: false }));
 app.use(json({ limit: "70kb" }));

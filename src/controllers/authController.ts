@@ -90,12 +90,11 @@ export const handleLogin = async (req: Request, res: Response) => {
         res.status(400).json({ error: "Authentication failed" });
         return;
       }
+      console.log(isPasswordValid);
 
-      // console.log(existingUser)
+      console.log(existingUser);
 
       // all checks passed
-      // sign token
-
       // Generate Access Token
       const accessToken = jwt.sign(
         { id: existingUser.id, email: existingUser.email },
@@ -103,19 +102,19 @@ export const handleLogin = async (req: Request, res: Response) => {
         { expiresIn: "15m" }
       );
 
-      // Generate Refresh Token
-      const refreshToken = jwt.sign(
-        { id: existingUser.id },
-        process.env.REFRESH_SECRET as string,
-        { expiresIn: "7d" }
-      );
+      // // Generate Refresh Token
+      // const refreshToken = jwt.sign(
+      //   { id: existingUser.id, email: existingUser.email },
+      //   process.env.REFRESH_SECRET as string,
+      //   { expiresIn: "7d" }
+      // );
 
-      // Store refresh token in HTTP-Only Cookie
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: true, // Set to false in development
-        sameSite: "strict",
-      });
+      // // Store refresh token in HTTP-Only Cookie
+      // res.cookie("refreshToken", refreshToken, {
+      //   httpOnly: true,
+      //   secure: true, // Set to false in development
+      //   sameSite: "strict",
+      // });
 
       res.status(200).json({ message: "Login Successful", email, accessToken });
     } else {
@@ -159,11 +158,7 @@ export const handleLogin = async (req: Request, res: Response) => {
 
       // all checks passed
       // sign token
-      // const token = jwt.sign(
-      //   { id: userId, email, username },
-      //   process.env.JWT_SECRET as string,
-      //   { expiresIn: "30d" }
-      // );
+
       const accessToken = jwt.sign(
         { id: userId, email, username },
         process.env.JWT_SECRET as string,
@@ -183,7 +178,11 @@ export const handleLogin = async (req: Request, res: Response) => {
         secure: true, // Set to false in development
         sameSite: "strict",
       });
-      res.status(200).json({ message: "Login Successful", email, accessToken });
+      res.status(200).json({
+        message: "Login Successful",
+        userId,
+        accessToken,
+      });
     }
   } catch (error) {
     res.status(500).json({ error });
