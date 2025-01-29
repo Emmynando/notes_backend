@@ -41,11 +41,24 @@ export const addTask = async (req: Request, res: Response) => {
     return;
   }
 
-  const { task_title, task_body, reminder, schedule, taskCategory } =
-    await req.body;
+  const {
+    task_title,
+    task_body,
+    reminder,
+    scheduleStart,
+    scheduleEnd,
+    taskCategory,
+  } = await req.body;
   //   console.log("Current time (UTC):", new Date(Date.now()).toISOString());
 
-  if (!task_title && !task_body && !reminder && !schedule && !taskCategory) {
+  if (
+    !task_title &&
+    !task_body &&
+    !reminder &&
+    !scheduleStart &&
+    !scheduleEnd &&
+    !taskCategory
+  ) {
     res.status(400).json({ message: "Invalid Fields" });
   }
   const sanitizedTaskbody = xss(task_body);
@@ -70,7 +83,8 @@ export const addTask = async (req: Request, res: Response) => {
         task_title: sanitizedTaskTitle,
         task_body: sanitizedTaskbody,
         reminder,
-        schedule,
+        scheduleStart,
+        scheduleEnd,
         taskCategory,
       },
     });
@@ -108,15 +122,23 @@ export const editTask = async (req: Request, res: Response) => {
     return;
   }
 
-  const { task_title, task_body, reminder, schedule, taskCategory, taskID } =
-    await req.body;
+  const {
+    task_title,
+    task_body,
+    reminder,
+    scheduleStart,
+    scheduleEnd,
+    taskCategory,
+    taskID,
+  } = await req.body;
 
   // if any field is empty
   if (
     !task_title ||
     !task_body ||
     !reminder ||
-    !schedule ||
+    !scheduleStart ||
+    !scheduleEnd ||
     !taskCategory ||
     !taskID
   ) {
@@ -147,7 +169,8 @@ export const editTask = async (req: Request, res: Response) => {
         ...(task_title && { task_title }),
         ...(task_body && { task_body }),
         ...(reminder && { reminder }),
-        ...(schedule && { schedule }),
+        ...(scheduleEnd && { scheduleEnd }),
+        ...(scheduleStart && { scheduleStart }),
         ...(taskCategory && { taskCategory }),
       },
     });

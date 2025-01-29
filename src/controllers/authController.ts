@@ -62,6 +62,7 @@ export const handleSignUp = async (req: Request, res: Response) => {
   }
 };
 
+// HANDLE LOGIN
 export const handleLogin = async (req: Request, res: Response) => {
   const { username, password, email } = req.body;
 
@@ -101,13 +102,11 @@ export const handleLogin = async (req: Request, res: Response) => {
         return;
       }
 
+      console.log(existingUser);
+
       // all checks passed
       // sign token
-      // const token = jwt.sign(
-      //   { id: existingUser.id, email },
-      //   process.env.JWT_SECRET as string,
-      //   { expiresIn: "30d" }
-      // );
+
       // Generate Access Token
       const accessToken = jwt.sign(
         { id: existingUser.id, email: existingUser.email },

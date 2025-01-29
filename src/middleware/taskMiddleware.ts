@@ -8,7 +8,7 @@ export const addTaskMiddleware = z.object({
     required_error: "Please select a date and time",
     invalid_type_error: "That's not a date!",
   }),
-  schedule: z.coerce
+  scheduleStart: z.coerce
     .date({
       required_error: "Please select a date and time",
       invalid_type_error: "That's not a date!",
@@ -22,4 +22,5 @@ export const addTaskMiddleware = z.object({
         message: "Your schedule should be at least 15 minutes from now.",
       }
     ),
+  scheduleEnd: z.coerce.date(),
 });
