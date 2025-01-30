@@ -113,14 +113,12 @@ export const handleLogin = async (req: Request, res: Response) => {
       //   sameSite: "strict",
       // });
 
-      res
-        .status(200)
-        .json({
-          message: "Login Successful",
-          id: existingUser.id,
-          email,
-          accessToken,
-        });
+      res.status(200).json({
+        message: "Login Successful",
+        id: existingUser.id,
+        email,
+        accessToken,
+      });
     } else {
       // login using username if username was provided
       // check for user using username
@@ -184,7 +182,7 @@ export const handleLogin = async (req: Request, res: Response) => {
       });
       res.status(200).json({
         message: "Login Successful",
-        userId,
+        id: userId,
         accessToken,
       });
     }
