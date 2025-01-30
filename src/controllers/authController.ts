@@ -195,7 +195,8 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
-    return res.status(403).json({ error: "Refresh token required" });
+    res.status(403).json({ error: "Refresh token required" });
+    return;
   }
 
   try {
@@ -206,7 +207,8 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({ where: { id: decoded.id } });
     if (!user) {
-      return res.status(403).json({ error: "User not found" });
+      res.status(403).json({ error: "User not found" });
+      return;
     }
 
     // Generate new Access Token

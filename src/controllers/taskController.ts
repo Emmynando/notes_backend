@@ -55,7 +55,6 @@ export const addTask = async (req: Request, res: Response) => {
     !task_body ||
     !reminder ||
     !scheduleStart ||
-    !scheduleEnd ||
     !taskCategory
   ) {
     res.status(400).json({ message: "Invalid Fields" });
