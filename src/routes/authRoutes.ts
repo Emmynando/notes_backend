@@ -1,5 +1,9 @@
 import express from "express";
-import { handleSignUp, handleLogin } from "../controllers/authController.js";
+import {
+  handleSignUp,
+  handleLogin,
+  handleRefreshToken,
+} from "../controllers/authController.js";
 import { zodValidateData } from "../middleware/zodMiddleware.js";
 import { z } from "zod";
 const router = express.Router();
@@ -33,5 +37,8 @@ router.post("/register", zodValidateData(createUser), handleSignUp);
 
 // login
 router.post("/login", zodValidateData(loginValidation), handleLogin);
+
+// refresh token
+router.post("/refresh-token", handleRefreshToken);
 
 export default router;
