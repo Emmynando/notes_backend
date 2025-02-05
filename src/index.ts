@@ -5,6 +5,7 @@ import authRoutes from "./routes/authRoutes.js";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const PORT = process.env.PORT || 8080;
 import { authMiddleware } from "./middleware/authMiddleware.js";
@@ -27,6 +28,7 @@ const corsOptions = {
 
 dotenv.config();
 const app = express();
+app.use(cookieParser());
 app.use(limiter);
 app.use(urlencoded({ extended: false }));
 app.use(json({ limit: "70kb" }));

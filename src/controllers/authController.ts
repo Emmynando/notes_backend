@@ -99,20 +99,6 @@ export const handleLogin = async (req: Request, res: Response) => {
         { expiresIn: "15m" }
       );
 
-      // // Generate Refresh Token
-      // const refreshToken = jwt.sign(
-      //   { id: existingUser.id, email: existingUser.email },
-      //   process.env.REFRESH_SECRET as string,
-      //   { expiresIn: "7d" }
-      // );
-
-      // // Store refresh token in HTTP-Only Cookie
-      // res.cookie("refreshToken", refreshToken, {
-      //   httpOnly: true,
-      //   secure: true, // Set to false in development
-      //   sameSite: "strict",
-      // });
-
       res.status(200).json({
         message: "Login Successful",
         id: existingUser.id,
@@ -177,11 +163,11 @@ export const handleLogin = async (req: Request, res: Response) => {
       // Store refresh token in HTTP-Only Cookie
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true, // Set to false in development
+        secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
       res.status(200).json({
-        message: "Login Successful",
+        message: "Token Refreshed",
         id: userId,
         accessToken,
       });
@@ -222,4 +208,17 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(403).json({ error: "Invalid refresh token" });
   }
+};
+
+export const clearToken = async (req: Request, res: Response) => {
+  // Clear the HttpOnly cookie by setting it to expire in the past
+  res.cookie("refreshToken", "", {
+    expires: new Date(0), // Expires immediately
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/", // Must match the original path
+    sameSite: "strict",
+  });
+
+  res.status(200).json({ message: "Logged out successfully" });
 };

@@ -41,4 +41,7 @@ router.post("/login", zodValidateData(loginValidation), handleLogin);
 // refresh token
 router.post("/refresh-token", handleRefreshToken);
 
+// clear token
+router.post("/logout", handleRefreshToken);
+
 export default router;
