@@ -99,6 +99,20 @@ export const handleLogin = async (req: Request, res: Response) => {
         { expiresIn: "15m" }
       );
 
+      // Generate Refresh Token
+      const refreshToken = jwt.sign(
+        { id: existingUser },
+        process.env.REFRESH_SECRET as string,
+        { expiresIn: "7d" }
+      );
+
+      // Store refresh token in HTTP-Only Cookie
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
       res.status(200).json({
         message: "Login Successful",
         id: existingUser.id,
@@ -179,6 +193,7 @@ export const handleLogin = async (req: Request, res: Response) => {
 
 export const handleRefreshToken = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
+  console.log(refreshToken);
 
   if (!refreshToken) {
     res.status(403).json({ error: "Refresh token required" });
